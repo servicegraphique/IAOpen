@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AssurPro — Votre assurance pro, discutée avec un conseiller</title>
+<meta name="description" content="Décrivez votre besoin d'assurance professionnelle en discutant avec un conseiller. En 2 minutes, votre besoin est qualifié et un expert vous rappelle. Gratuit, sans engagement.">
+<!-- ⚠️ À PERSONNALISER : title, description, textes de marque (marque « AssurPro » = exemple de démonstration) -->
+<style>
+/* ==============================================================
+   CSS DE LA PAGE (one-page) — mobile first, aucune librairie
+   ============================================================== */
+:root{
+  --navy:#0b3b66; --navy-dark:#082c4d; --green:#0e7c66;
+  --ink:#1f2937; --muted:#5b6472; --line:#e3e8ef; --bg:#f6f8fb; --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--navy)}
+img,svg{vertical-align:middle}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+
+/* En-tête */
+header.site{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+header.site .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:800;font-size:1.15rem;color:var(--navy);letter-spacing:-.02em}
+.logo span{color:var(--green)}
+header.site nav a{margin-left:20px;font-size:.95rem;text-decoration:none;color:var(--muted)}
+header.site nav a:hover{color:var(--navy)}
+
+/* Héros */
+.hero{padding:64px 0 48px;text-align:center}
+.hero h1{font-size:clamp(1.7rem,5vw,2.7rem);line-height:1.15;color:var(--navy);letter-spacing:-.02em}
+.hero p.sub{max-width:620px;margin:18px auto 0;font-size:1.05rem;color:var(--muted)}
+.cta{display:inline-block;margin-top:28px;background:var(--green);color:#fff;border:0;border-radius:999px;
+     padding:16px 30px;font-size:1.05rem;font-weight:700;cursor:pointer;min-height:52px;
+     box-shadow:0 8px 24px rgba(14,124,102,.28);transition:transform .15s ease}
+.cta:hover{transform:translateY(-2px)}
+.trust{margin-top:16px;font-size:.9rem;color:var(--muted)}
+.trust b{color:var(--ink)}
+
+/* Étapes */
+.steps{padding:8px 0 56px}
+.steps h2,.faq h2{font-size:1.5rem;color:var(--navy);text-align:center;margin-bottom:24px}
+.cards{display:grid;gap:16px;grid-template-columns:1fr}
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card .num{display:inline-flex;width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;
+           align-items:center;justify-content:center;font-weight:700;margin-bottom:10px}
+.card h3{font-size:1.05rem;margin-bottom:6px}
+.card p{font-size:.95rem;color:var(--muted)}
+
+/* FAQ */
+.faq{padding:8px 0 56px}
+.faq details{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+.faq summary{cursor:pointer;font-weight:600;color:var(--navy)}
+.faq details p{margin-top:10px;font-size:.95rem;color:var(--muted)}
+
+/* Pied de page */
+footer.site{background:var(--navy-dark);color:#c9d6e4;padding:40px 0 56px;font-size:.9rem}
+footer.site h2{color:#fff;font-size:1.05rem;margin:18px 0 8px}
+footer.site a{color:#9fc3e8}
+footer.site .fine{margin-top:24px;font-size:.8rem;color:#7d93ab}
+
+/* Bandeau cookies (tracking uniquement après consentement) */
+#ap-cookiebar{position:fixed;left:12px;right:12px;bottom:12px;z-index:900;background:var(--white);
+  border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 10px 30px rgba(8,44,77,.18);
+  font-size:.9rem;display:none}
+#ap-cookiebar .row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+#ap-cookiebar button{border:0;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer;min-height:40px}
+#ap-ok{background:var(--green);color:#fff}
+#ap-ko{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+
+@media(min-width:768px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+  .hero{padding:88px 0 64px}
+}
+</style>
+</head>
+<body>
+
+<!-- Bandeau cookies : aucun tracker ne se charge avant acceptation -->
+<div id="ap-cookiebar" role="dialog" aria-label="Consentement cookies">
+  <div>Nous utilisons des cookies de mesure d'audience uniquement si vous les acceptez,
+    pour améliorer cette page. Aucun cookie publicitaire n'est déposé sans votre accord.</div>
+  <div class="row">
+    <button id="ap-ok" type="button">Tout accepter</button>
+    <button id="ap-ko" type="button">Refuser</button>
+  </div>
+</div>
+
+<header class="site">
+  <div class="wrap">
+    <div class="logo">Assur<span>Pro</span></div>
+    <nav aria-label="Navigation principale">
+      <a href="#etapes">Comment ça marche</a>
+      <a href="#faq">FAQ</a>
+      <a href="#confidentialite">Confidentialité</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- Héros -->
+  <section class="hero">
+    <div class="wrap">
+      <h1>Votre assurance pro,<br>discutée comme avec une vraie personne.</h1>
+      <p class="sub">Décrivez votre situation en deux minutes. Notre conseiller analyse votre besoin,
+        vous oriente, et un expert AssurPro vous rappelle avec une proposition adaptée.</p>
+      <button class="cta" id="ap-open-chat" type="button" aria-haspopup="dialog">💬 Discuter avec un conseiller</button>
+      <p class="trust"><b>Gratuit</b> · <b>Sans engagement</b> · Vous gardez la main à chaque étape</p>
+    </div>
+  </section>
+
+  <!-- Comment ça marche -->
+  <section class="steps" id="etapes">
+    <div class="wrap">
+      <h2>Comment ça marche</h2>
+      <div class="cards">
+        <div class="card"><span class="num">1</span><h3>Vous discutez</h3>
+          <p>Racontez votre besoin avec vos mots. Pas de formulaire à remplir : le conseiller vous pose les bonnes questions.</p></div>
+        <div class="card"><span class="num">2</span><h3>Votre besoin est qualifié</h3>
+          <p>Activité, situation actuelle, urgence : tout est résumé pour préparer votre dossier avant même le rappel.</p></div>
+        <div class="card"><span class="num">3</span><h3>Un expert vous rappelle</h3>
+          <p>Un conseiller AssurPro vous contacte avec une proposition adaptée. Vous décidez ensuite, librement.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Preuves sociales : insérez ICI uniquement de vrais avis clients nominés
+       (nom, société, date) avec leur accord écrit. Aucun faux témoignage. -->
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="wrap">
+      <h2>Questions fréquentes</h2>
+      <details><summary>Qui me répond dans le chat ?</summary>
+        <p>Vous échangez d'abord avec notre assistant conversationnel, qui prépare votre dossier.
+           Ensuite, un conseiller AssurPro spécialisé en assurance professionnelle vous rappelle.
+           L'assistant est clairement identifié et ne promet ni tarif ni garantie : le chiffrage
+           est fait par le conseiller humain.</p></details>
+      <details><summary>Combien coûte cet échange ?</summary>
+        <p>Rien du tout. La discussion et l'analyse de votre besoin sont gratuites et sans engagement.
+           Vous ne recevez un rappel que si vous l'acceptez explicitement.</p></details>
+      <details><summary>Que faites-vous de mes données ?</summary>
+        <p>Vos informations ne servent qu'à traiter votre demande et préparer le rappel.
+           Elles ne sont jamais vendues. Le rappel respecte les oppositions à la prospection
+           (inscription possible sur <a href="https://www.bloctel.gouv.fr" rel="noopener" target="_blank">Bloctel</a>).
+           Vous pouvez demander l'accès, la rectification ou la suppression de vos données à tout moment
+           (voir <a href="#confidentialite">Confidentialité</a>).</p></details>
+      <details><summary>Quels besoins pouvez-vous traiter ?</summary>
+        <p>Responsabilité civile professionnelle, multirisque de local professionnel, flotte de véhicules,
+           prévoyance et retraite du dirigeant, couverture des salariés… Décrivez simplement votre situation,
+           l'assistant s'occupe de la suite.</p></details>
+      <details><summary>Comment se passe le rappel ?</summary>
+        <p>Un conseiller vous appelle au moment que vous aurez indiqué, avec une proposition préparée
+           à partir de votre échange. Si le moment ne convient pas, il vous propose une autre date.
+           Vous pouvez aussi demander un contact par email uniquement.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer class="site" id="confidentialite">
+  <div class="wrap">
+    <h2>Mentions légales</h2>
+    <p>AssurPro — site de démonstration. Éditeur : [RAISON_SOCIALE], [SIRET], [ADRESSE].
+       Hébergement : Cloudflare. Le chat fait appel à un service d'intelligence artificielle
+       hébergé dans l'Union européenne.</p>
+    <h2>Confidentialité (RGPD)</h2>
+    <p><b>Responsable de traitement :</b> AssurPro [RAISON_SOCIALE].
+       <b>Finalité :</b> répondre à votre demande et organiser un rappel commercial.
+       <b>Base légale :</b> votre consentement, recueilli dans le chat avant tout enregistrement.
+       <b>Durée de conservation :</b> [12 mois] à compter du dernier échange.
+       <b>Destinataires :</b> conseillers AssurPro et sous-traitants techniques (hébergement Cloudflare,
+       enregistrement Google Sheets), jamais de revente à des tiers.
+       <b>Droits :</b> accès, rectification, suppression, opposition — écrivez à
+       <a href="mailto:privacy@assurpro-example.fr">privacy@assurpro-example.fr</a>
+       ou à [ADRESSE_POSTALE]. Vous pouvez également saisir la
+       <a href="https://www.cnil.fr" rel="noopener" target="_blank">CNIL</a>.
+       <b>Prospection téléphonique :</b> nos rappels respectent les oppositions inscrites sur
+       <a href="https://www.bloctel.gouv.fr" rel="noopener" target="_blank">Bloctel</a>.
+       <b>Aucune donnée n'est enregistrée</b> tant que vous n'avez pas coché la case de consentement
+       dans le chat.</p>
+    <p class="fine">© 2026 AssurPro (exemple de démonstration). Contrôles : page sans cookie publicitaire, tracking activé uniquement après consentement.</p>
+  </div>
+</footer>
+
+<!-- ==============================================================
+     DÉBUT MODULE CHAT — autonome (style + HTML + script)
+     Collable tel quel dans un Code Embed Webflow
+     ============================================================== -->
+<style>
+/* Chat : bouton flottant + panneau, mobile first */
+#ap-chat-btn{position:fixed;right:16px;bottom:16px;z-index:950;width:58px;height:58px;border-radius:50%;
+  border:0;background:var(--green);color:#fff;font-size:26px;cursor:pointer;
+  box-shadow:0 6px 20px rgba(14,124,102,.35)}
+#ap-chat-btn[aria-expanded="true"]{background:var(--navy)}
+#ap-chat{position:fixed;inset:0;z-index:960;background:var(--white);display:none;flex-direction:column;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+#ap-chat.open{display:flex}
+.ap-head{display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;padding:12px 14px}
+.ap-avatar{width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.ap-head .who{flex:1;min-width:0}
+.ap-head .who b{display:block;font-size:.95rem}
+.ap-head .who small{display:block;color:#bcd3e8;font-size:.75rem}
+.ap-status{width:9px;height:9px;border-radius:50%;background:#35d29a;flex:none}
+.ap-close{background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer;padding:6px;min-width:40px;min-height:40px}
+#ap-rgpd{display:flex;gap:8px;align-items:flex-start;background:#eef6f3;border-bottom:1px solid var(--line);
+  padding:10px 14px;font-size:.78rem;color:#204a41}
+#ap-rgpd a{color:var(--green)}
+#ap-rgpd button{margin-left:auto;background:transparent;border:0;cursor:pointer;color:#204a41;font-size:14px;min-width:32px;min-height:32px}
+#ap-progress{height:3px;background:var(--line)}
+#ap-progress i{display:block;height:100%;width:0;background:var(--green);transition:width .4s ease}
+#ap-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.ap-msg{max-width:86%;padding:10px 13px;border-radius:14px;font-size:.92rem;line-height:1.45;
+  white-space:pre-wrap;word-break:break-word;animation:apIn .25s ease}
+.ap-msg.user{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:4px}
+.ap-msg.bot{align-self:flex-start;background:var(--white);border:1px solid var(--line);border-bottom-left-radius:4px}
+.ap-msg.bot.typing span{display:inline-block;width:7px;height:7px;margin:0 1.5px;border-radius:50%;
+  background:#9aa7b5;animation:apBlink 1s infinite}
+.ap-msg.bot.typing span:nth-child(2){animation-delay:.2s}
+.ap-msg.bot.typing span:nth-child(3){animation-delay:.4s}
+@keyframes apIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes apBlink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+#ap-chips{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;background:var(--bg)}
+#ap-chips button{background:var(--white);border:1px solid var(--navy);color:var(--navy);border-radius:999px;
+  padding:9px 14px;font-size:.85rem;cursor:pointer;min-height:38px}
+#ap-chips button:hover{background:var(--navy);color:#fff}
+.ap-form{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:var(--white)}
+#ap-input{flex:1;padding:12px;border:1px solid #cdd5df;border-radius:12px;font-size:15px;min-height:46px}
+#ap-send{padding:12px 16px;border:0;border-radius:12px;background:var(--green);color:#fff;font-weight:700;cursor:pointer;min-height:46px}
+.ap-note{padding:7px 14px;font-size:.72rem;color:var(--muted);background:var(--white);border-top:1px solid var(--line)}
+/* Carte de consentement */
+.ap-consent,.ap-fallback{align-self:stretch;background:var(--white);border:1.5px solid var(--green);
+  border-radius:14px;padding:14px;font-size:.88rem;animation:apIn .25s ease}
+.ap-consent h4,.ap-fallback h4{color:var(--navy);margin-bottom:8px;font-size:.95rem}
+.ap-consent table{width:100%;border-collapse:collapse;margin-bottom:8px}
+.ap-consent td{padding:3px 0;vertical-align:top;font-size:.85rem}
+.ap-consent td:first-child{color:var(--muted);width:38%}
+.ap-consent label{display:flex;gap:8px;align-items:flex-start;margin:10px 0;font-size:.8rem;color:var(--ink);cursor:pointer}
+.ap-consent .row{display:flex;gap:8px;flex-wrap:wrap}
+.ap-consent button,.ap-fallback button{border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;min-height:44px}
+.ap-yes{background:var(--green);color:#fff}
+.ap-yes:disabled{background:#a8cfc6;cursor:not-allowed}
+.ap-no{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.ap-fallback input{width:100%;padding:10px;border:1px solid #cdd5df;border-radius:10px;margin-bottom:8px;font-size:15px;min-height:44px}
+.ap-fallback label{display:flex;gap:8px;align-items:flex-start;font-size:.8rem;margin:6px 0 10px}
+.ap-ok-msg{align-self:flex-start;background:#eef6f3;border:1px solid var(--green);color:#204a41;
+  border-radius:14px;padding:10px 13px;font-size:.88rem;animation:apIn .25s ease}
+@media(min-width:720px){
+  #ap-chat{inset:auto;right:20px;bottom:88px;width:400px;height:min(560px,calc(100vh - 120px));
+    border-radius:16px;overflow:hidden;box-shadow:0 18px 50px rgba(8,44,77,.3);border:1px solid var(--line)}
+  .ap-msg{max-width:80%}
+}
+@media (prefers-reduced-motion:reduce){.ap-msg,#ap-progress i{animation:none;transition:none}}
+</style>
+
+<!-- Bouton flottant -->
+<button id="ap-chat-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="ap-chat"
+        aria-label="Ouvrir le chat avec un conseiller">💬</button>
+
+<!-- Panneau du chat -->
+<div id="ap-chat" role="dialog" aria-modal="true" aria-labelledby="ap-chat-title">
+  <div class="ap-head">
+    <div class="ap-avatar" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0b3b66" stroke-width="2"
+           stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    </div>
+    <div class="who"><b id="ap-chat-title">Camille — AssurPro</b><small>Assistante du conseiller · répond en quelques secondes</small></div>
+    <span class="ap-status" aria-hidden="true" title="En ligne"></span>
+    <button class="ap-close" type="button" aria-label="Fermer le chat">×</button>
+  </div>
+
+  <!-- Information RGPD visible dès l'ouverture -->
+  <div id="ap-rgpd">
+    <span>💬 Cet échange est traité par AssurPro uniquement pour répondre à votre demande.
+      Rien n'est enregistré sans votre accord. <a href="#confidentialite">En savoir plus</a></span>
+    <button type="button" aria-label="Masquer cette information">✕</button>
+  </div>
+
+  <div id="ap-progress" aria-hidden="true"><i></i></div>
+  <div id="ap-msgs" aria-live="polite"></div>
+  <div id="ap-chips" hidden>
+    <button type="button" data-say="Je veux comparer mes contrats actuels">Comparer mes contrats</button>
+    <button type="button" data-say="J'ai un nouveau besoin à assurer pour mon activité">Nouveau besoin</button>
+    <button type="button" data-say="J'ai un problème avec mon contrat actuel">Problème en cours</button>
+  </div>
+  <form class="ap-form" id="ap-form">
+    <label for="ap-input" style="position:absolute;left:-9999px">Votre message</label>
+    <input id="ap-input" type="text" maxlength="600" autocomplete="off" placeholder="Écrivez votre message…">
+    <button id="ap-send" type="submit">Envoyer</button>
+  </form>
+  <div class="ap-note">Assistante IA d'AssurPro · pas de données sensibles, pas de tarif inventé ·
+    rappel par un conseiller humain uniquement avec votre accord</div>
+</div>
+
+<script>
+/* ==============================================================
+   MODULE CHAT AssurPro — vanilla JS, aucune dépendance
+   ==============================================================
+   ⚠️ POINTS À PERSONNALISER (voir AP_CONFIG ci-dessous) :
+     - WORKER_URL : l'URL de votre Cloudflare Worker
+     - BRAND / CONSEILLER : votre marque et le prénom de l'agent
+     - EMAIL_CONTACT / EMAIL_PRIVACY : vos adresses réelles
+     - GA4_ID : optionnel (mesure d'audience, chargé seulement
+       après acceptation des cookies)
+   ============================================================== */
+var AP_CONFIG = {
+  WORKER_URL: "https://VOTRE-WORKER.workers.dev",   // ⚠️ sans /chat ni /
+  BRAND: "AssurPro",
+  CONSEILLER: "Camille",
+  EMAIL_CONTACT: "contact@assurpro-example.fr",
+  EMAIL_PRIVACY: "privacy@assurpro-example.fr",
+  DELAI_RAPPEL: "24 heures ouvrées",                // ⚠️ à aligner sur votre vrai processus
+  GA4_ID: ""                                        // ex. "G-XXXXXXXXXX", chaîne vide = désactivé
+};
+
+(function () {
+  "use strict";
+
+  /* ---------- Configuration DOM ---------- */
+  var btn   = document.getElementById("ap-chat-btn");
+  var panel = document.getElementById("ap-chat");
+  var msgs  = document.getElementById("ap-msgs");
+  var chips = document.getElementById("ap-chips");
+  var form  = document.getElementById("ap-form");
+  var input = document.getElementById("ap-input");
+  var bar   = document.querySelector("#ap-progress i");
+  var rgpd  = document.getElementById("ap-rgpd");
+
+  /* ---------- État ---------- */
+  var history = [];      // messages user/assistant envoyés au proxy
+  var apLead = null;     // lead détecté, en attente de consentement
+  var askFix = null;     // "email" | "telephone" si coordonnée invalide
+  var started = false;
+
+  /* ---------- UTM & source de trafic ---------- */
+  var qp = new URLSearchParams(location.search);
+  var UTM = {
+    utm_source:   qp.get("utm_source") || "",
+    utm_medium:   qp.get("utm_medium") || "",
+    utm_campaign: qp.get("utm_campaign") || "",
+    referrer: document.referrer || ""
+  };
+
+  /* ---------- Tracking (GA4 / Meta) : seulement si cookies acceptés ---------- */
+  function loadGA4() {
+    if (!AP_CONFIG.GA4_ID || document.getElementById("ap-ga4")) return;
+    var s = document.createElement("script");
+    s.id = "ap-ga4"; s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + AP_CONFIG.GA4_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { window.dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag("js", new Date());
+    gtag("config", AP_CONFIG.GA4_ID, { anonymize_ip: true });
+  }
+  function track(name) {
+    if (localStorage.getItem("ap_cookies") !== "granted") return;  // consentement d'abord
+    if (typeof window.gtag === "function") window.gtag("event", name);
+    if (typeof window.fbq === "function") window.fbq("trackCustom", name); // si vous ajoutez un Pixel
+  }
+
+  /* ---------- Bandeau cookies ---------- */
+  var bar2 = document.getElementById("ap-cookiebar");
+  if (!localStorage.getItem("ap_cookies")) bar2.style.display = "block";
+  document.getElementById("ap-ok").addEventListener("click", function () {
+    localStorage.setItem("ap_cookies", "granted"); bar2.style.display = "none"; loadGA4();
+  });
+  document.getElementById("ap-ko").addEventListener("click", function () {
+    localStorage.setItem("ap_cookies", "denied"); bar2.style.display = "none";
+  });
+
+  /* ---------- Ouverture / fermeture ---------- */
+  function openChat() {
+    panel.classList.add("open");
+    btn.setAttribute("aria-expanded", "true");
+    btn.setAttribute("aria-label", "Fermer le chat");
+    track("ap_chat_open");
+    if (!started) {
+      started = true;
+      botSay("Bonjour et bienvenue chez " + AP_CONFIG.BRAND + " ! Je suis " + AP_CONFIG.CONSEILLER +
+        ", assistante du conseiller. Racontez-moi en deux mots ce que vous cherchez pour votre activité :");
+      chips.hidden = false;
+    }
+    setTimeout(function () { input.focus(); }, 60);
+  }
+  function closeChat() {
+    panel.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-label", "Ouvrir le chat avec un conseiller");
+    btn.focus();
+  }
+  btn.addEventListener("click", function () {
+    if (panel.classList.contains("open")) closeChat(); else openChat();
+  });
+  panel.querySelector(".ap-close").addEventListener("click", closeChat);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && panel.classList.contains("open")) closeChat();
+  });
+  document.getElementById("ap-open-chat").addEventListener("click", openChat);
+  rgpd.querySelector("button").addEventListener("click", function () { rgpd.style.display = "none"; });
+
+  /* ---------- Affichage des messages ---------- */
+  function bubble(kind, text) {
+    var d = document.createElement("div");
+    d.className = "ap-msg " + kind;
+    d.textContent = text;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+    return d;
+  }
+  function botSay(text) { return bubble("bot", text); }
+  function typing(on) {
+    var t = msgs.querySelector(".typing");
+    if (t) t.remove();
+    if (on) {
+      var d = document.createElement("div");
+      d.className = "ap-msg bot typing";
+      d.setAttribute("aria-label", "En train d'écrire");
+      d.appendChild(document.createElement("span"));
+      d.appendChild(document.createElement("span"));
+      d.appendChild(document.createElement("span"));
+      msgs.appendChild(d);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+  }
+  function setProgress(p) { bar.style.width = (Math.min(5, p) / 5 * 100) + "%"; }
+
+  /* ---------- Carte de consentement (avant tout envoi au Sheet) ---------- */
+  function showConsent(l) {
+    chips.hidden = true;
+    var c = document.createElement("div");
+    c.className = "ap-consent";
+
+    var h = document.createElement("h4");
+    h.textContent = "Prêt à envoyer — vérifiez vos informations";
+    c.appendChild(h);
+
+    var t = document.createElement("table");
+    [["Prénom", l.prenom], ["Email", l.email], ["Téléphone", l.telephone],
+     ["Ville / CP", l.ville_cp], ["Votre besoin", l.besoin], ["Urgence", l.urgence]]
+      .forEach(function (row) {
+        var tr = document.createElement("tr");
+        var td1 = document.createElement("td"); td1.textContent = row[0];
+        var td2 = document.createElement("td"); td2.textContent = row[1] || "—";
+        tr.appendChild(td1); tr.appendChild(td2); t.appendChild(tr);
+      });
+    c.appendChild(t);
+
+    var lab = document.createElement("label");
+    var cb = document.createElement("input");
+    cb.type = "checkbox";
+    var span = document.createElement("span");
+    span.textContent = "J'accepte que " + AP_CONFIG.BRAND + " conserve ces informations pour me recontacter au sujet " +
+      "de ma demande. Les rappels respectent les oppositions Bloctel, et je peux demander la suppression " +
+      "de mes données à tout moment (" + AP_CONFIG.EMAIL_PRIVACY + ", voir Confidentialité).";
+    lab.appendChild(cb); lab.appendChild(span);
+    c.appendChild(lab);
+
+    var row = document.createElement("div");
+    row.className = "row";
+    var yes = document.createElement("button");
+    yes.type = "button"; yes.className = "ap-yes"; yes.textContent = "Envoyer mes informations"; yes.disabled = true;
+    var no = document.createElement("button");
+    no.type = "button"; no.className = "ap-no"; no.textContent = "Annuler";
+    row.appendChild(yes); row.appendChild(no);
+    c.appendChild(row);
+    msgs.appendChild(c);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    cb.addEventListener("change", function () { yes.disabled = !cb.checked; });
+    no.addEventListener("click", function () {
+      c.remove(); apLead = null;
+      botSay("Très bien, je ne conserve rien. Si vous changez d'avis, dites-le-moi, ou écrivez à " +
+        AP_CONFIG.EMAIL_CONTACT + ".");
+    });
+    yes.addEventListener("click", function () {
+      yes.disabled = true; cb.disabled = true;
+      sendLead(l, c);
+    });
+  }
+
+  /* ---------- Envoi du lead au proxy → Google Sheet ---------- */
+  function sendLead(l, card) {
+    fetch(AP_CONFIG.WORKER_URL + "/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lead: l, utm: UTM, page: location.pathname })
+    }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function () {
+        card.remove(); apLead = null;
+        setProgress(5);
+        var ok = document.createElement("div");
+        ok.className = "ap-ok-msg";
+        ok.textContent = "✅ Merci " + (l.prenom || "") + " ! Votre demande est enregistrée. Un conseiller " +
+          AP_CONFIG.BRAND + " vous rappellera sous " + AP_CONFIG.DELAI_RAPPEL +
+          ". Un récapitulatif vous sera utile : notez notre email " + AP_CONFIG.EMAIL_CONTACT + ".";
+        msgs.appendChild(ok);
+        msgs.scrollTop = msgs.scrollHeight;
+        track("ap_lead_sent");
+      })
+      .catch(function () {
+        botSay("L'enregistrement a échoué pour le moment. Réessayez dans un instant, ou écrivez directement à " +
+          AP_CONFIG.EMAIL_CONTACT + ".");
+      });
+  }
+
+  /* ---------- Formulaire de secours (IA indisponible / quota) ---------- */
+  function showFallback() {
+    chips.hidden = true;
+    var f = document.createElement("div");
+    f.className = "ap-fallback";
+    var h = document.createElement("h4");
+    h.textContent = "Le conseiller est momentanément indisponible — laissez vos coordonnées, nous vous rappelons.";
+    f.appendChild(h);
+    function field(ph, id, type) {
+      var i = document.createElement("input");
+      i.placeholder = ph; i.id = id; i.type = type || "text"; i.maxLength = 120;
+      i.setAttribute("aria-label", ph);
+      f.appendChild(i); return i;
+    }
+    var inNom = field("Votre nom", "ap-fb-nom");
+    var inMail = field("Votre email", "ap-fb-email", "email");
+    var inTel = field("Votre téléphone (facultatif)", "ap-fb-tel", "tel");
+    var lab = document.createElement("label");
+    var cb = document.createElement("input"); cb.type = "checkbox";
+    var sp = document.createElement("span");
+    sp.textContent = "J'accepte d'être recontacté(e) au sujet de ma demande (suppression possible à tout moment : " +
+      AP_CONFIG.EMAIL_PRIVACY + ").";
+    lab.appendChild(cb); lab.appendChild(sp); f.appendChild(lab);
+    var go = document.createElement("button");
+    go.type = "button"; go.className = "ap-yes"; go.textContent = "Être rappelé(e)"; go.disabled = true;
+    f.appendChild(go);
+    msgs.appendChild(f);
+    msgs.scrollTop = msgs.scrollHeight;
+    track("ap_fallback_used");
+
+    cb.addEventListener("change", function () { go.disabled = !cb.checked; });
+    go.addEventListener("click", function () {
+      var email = inMail.value.trim();
+      var tel = inTel.value.trim();
+      if (!email && !tel) { inMail.focus(); return; }
+      go.disabled = true;
+      fetch(AP_CONFIG.WORKER_URL + "/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lead: {
+            nom: inNom.value.trim(), prenom: "", email: email, telephone: tel,
+            ville_cp: "", besoin: "[Secours] Demande de rappel",
+            probleme: "Formulaire de secours utilisé (assistant momentanément indisponible)",
+            urgence: "inconnue", budget: "non précisé", score_lead: 40,
+            consentement: true, resume: "Formulaire de secours (IA indisponible)."
+          },
+          utm: UTM, page: location.pathname
+        })
+      }).then(function (r) { if (!r.ok) throw new Error("HTTP"); return r.json(); })
+        .then(function () {
+          f.remove();
+          var ok = document.createElement("div");
+          ok.className = "ap-ok-msg";
+          ok.textContent = "✅ C'est noté ! Un conseiller " + AP_CONFIG.BRAND + " vous rappellera sous " +
+            AP_CONFIG.DELAI_RAPPEL + ".";
+          msgs.appendChild(ok);
+          msgs.scrollTop = msgs.scrollHeight;
+          track("ap_lead_sent");
+        })
+        .catch(function () {
+          go.disabled = false;
+          botSay("L'envoi a échoué. Réessayez dans un instant ou écrivez à " + AP_CONFIG.EMAIL_CONTACT + ".");
+        });
+    });
+  }
+
+  /* ---------- Conversation avec l'agent ---------- */
+  function ask(text) {
+    if (!text) return;
+    bubble("user", text);
+    if (!history.length) track("ap_chat_first_msg");
+    history.push({ role: "user", content: text });
+    chips.hidden = true;
+    typing(true);
+
+    var body = { messages: history.slice(-16) };
+    if (askFix) { body.fix = askFix; askFix = null; }
+
+    fetch(AP_CONFIG.WORKER_URL + "/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (r.status === 429) throw new Error("rate");
+      if (r.status === 503) throw new Error("down");
+      if (!r.ok) throw new Error("HTTP");
+      return r.json();
+    }).then(function (data) {
+      typing(false);
+      var reply = data.reply || "Je vous écoute.";
+      botSay(reply);
+      history.push({ role: "assistant", content: reply });
+      if (data.progress !== undefined) setProgress(data.progress);
+      if (data.ask_fix === "email") askFix = "email";
+      if (data.ask_fix === "telephone") askFix = "telephone";
+      if (data.lead && !apLead) {
+        var l = data.lead;
+        if ((l.email || l.telephone) && l.consentement) {
+          apLead = l;
+          track("ap_contact_obtained");
+          showConsent(l);
+        }
+      }
+    }).catch(function (err) {
+      typing(false);
+      if (err.message === "rate") {
+        botSay("Vous m'envoyez beaucoup de messages très vite 🙂 Patientez une petite minute, puis renvoyez votre message.");
+      } else {
+        botSay("Oups, je rencontre un souci technique pour l'instant. Pour ne pas vous faire attendre :");
+        showFallback();
+      }
+    });
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var t = input.value.trim();
+    if (!t) return;
+    input.value = "";
+    ask(t);
+  });
+  chips.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-say]");
+    if (b) ask(b.getAttribute("data-say"));
+  });
+})();
+</script>
+<!-- ============ FIN MODULE CHAT ============ -->
+
+<!-- GA4 / Meta Pixel : NE RIEN coller ici directement.
+     Renseignez AP_CONFIG.GA4_ID : le tag se charge uniquement
+     après acceptation des cookies, et les événements
+     (ap_chat_open, ap_chat_first_msg, ap_contact_obtained,
+     ap_lead_sent, ap_fallback_used) partent via track(). -->
+</body>
+</html>

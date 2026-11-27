@@ -4,6 +4,8 @@
 
 **Date de vérification : 2026-11-27.** Licences via API GitHub + fichiers `LICENSE`, quotas via pages officielles de tarifs/limites ouvertes, dépôts GitHub en HTTP 200 (curl), docs ouvertes via `fetch_page`. Aucun quota inventé : ce qui n'est pas sur une page officielle est marqué « non vérifié ».
 
+> **Correction (2026-11-27, même jour) :** le modèle `@cf/meta/llama-3.1-8b-instruct-fp8-fast` n'apparaît plus au catalogue Workers AI (page officielle marquée indisponible). Il est remplacé partout ci-dessous par `@cf/qwen/qwen3.8-27b` (vérifié : 27B instruction-tuned, multilingue, function calling, contexte 262K, **zero data retention**). Conséquence : la conversion Neurons → tours de chat devient un ordre de grandeur (voir §7 « Non vérifié »).
+
 ---
 
 ## 1. Cadrage — 5 critères mesurables
@@ -34,7 +36,7 @@
 
 | Solution | Famille | Licence | URL dépôt | URL doc | Endpoint / API | Quota gratuit vérifié | Clé requise | Qualité FR /10 | Poids / latence | Note /10 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **Cloudflare Workers AI via Worker proxy** ⭐ n°1 | B | Proxy + snippet **MIT** (fournis §5) ; modèle `@cf/...` (licences des modèles : voir catalogue) | — (proxy maison) | [developers.cloudflare.com/workers-ai/platform/pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/) | `POST https://api.cloudflare.com/client/v4/accounts/{id}/ai/run/@cf/meta/llama-3.1-8b-instruct-fp8-fast` (ou binding `env.AI`) via votre Worker | **10 000 Neurons/jour** (reset 00:00 UTC) + Worker Free **100 000 req/jour** | Oui, **côté Worker uniquement** (binding ou token secret) | 7/10 (Llama 3.1 8B / Mistral 7B) | 0 Ko, edge EU ~100–300 ms | **9,0** |
+| **Cloudflare Workers AI via Worker proxy** ⭐ n°1 | B | Proxy + snippet **MIT** (fournis §5) ; modèle `@cf/...` (licences des modèles : voir catalogue) | — (proxy maison) | [developers.cloudflare.com/workers-ai/platform/pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/) | `POST https://api.cloudflare.com/client/v4/accounts/{id}/ai/run/@cf/qwen/qwen3.8-27b` (ou binding `env.AI`) via votre Worker | **10 000 Neurons/jour** (reset 00:00 UTC) + Worker Free **100 000 req/jour** | Oui, **côté Worker uniquement** (binding ou token secret) | 8/10 (Qwen 3.8 27B, multilingue) | 0 Ko, edge EU ~100–300 ms | **9,0** |
 | **Groq via Worker proxy** | B | Proxy + snippet **MIT** ; API Groq (propriétaire, gratuit) | — | [console.groq.com/docs/rate-limits](https://console.groq.com/docs/rate-limits) | `POST https://api.groq.com/openai/v1/chat/completions` (OpenAI-compatible, `baseURL https://api.groq.com/openai/v1`) | **30 RPM, 1 000 RPD, 8K TPM, 200K TPD** (`openai/gpt-oss-20b` / `120b`) | Oui, côté Worker | 9/10 (70B / 120B) | 0 Ko, LPU très rapide | 8,0 |
 | **Gemini free tier via proxy** | B | Proxy + snippet **MIT** ; API Google (propriétaire, gratuit) | — | [aistudio.google.com/docs/pricing](https://aistudio.google.com/docs/pricing) | `POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent` (clé `x-goog-api-key`) | **Free of charge** (input/output) ; RPM/RPD exacts **non vérifiés en statique** (voir AI Studio) | Oui, côté Worker | 9/10 (Flash multilingue) | 0 Ko, rapide | 7,5 |
 | **WebLLM** (modèle navigateur) | A | Apache-2.0 | [github.com/mlc-ai/web-llm](https://github.com/mlc-ai/web-llm) | [webllm.mlc.ai/docs](https://webllm.mlc.ai/docs/) | Aucun endpoint — `CreateMLCEngine("Llama-3.1-8B-Instruct")`, API OpenAI-compatible locale | **Illimité** (0 €, aucun quota) | **Non** | 7/10 (Llama 3.1 8B quantifié) | **Plusieurs Go** au 1ᵉʳ chargement (doc : « significant amount of time »), WebGPU requis | 7,0 |
@@ -55,7 +57,7 @@
 
 ### N°1 — Cloudflare Workers AI + Worker proxy + snippet MIT (famille B)
 
-**Pourquoi :** seul candidat qui cumule **0 € durable + UE (edge France) + quota suffisant + clé cachée + déploiement sans machine locale**. 10 000 Neurons/jour ≈ **800–1 000 tours de chat/jour** (ex. Llama 3.1 8B fp8-fast : ~12 Neurons/tour). Le Worker Free (100 000 req/jour) ne sera jamais le goulot. Le français est bon (Llama 3.1 8B / Mistral 7B), la latence edge est faible, et le déploiement se fait **entièrement dans le dashboard Cloudflare** (aucun `wrangler` local requis).
+**Pourquoi :** seul candidat qui cumule **0 € durable + UE (edge France) + quota suffisant + clé cachée + déploiement sans machine locale**. 10 000 Neurons/jour ≈ quelques centaines à ~1 000 tours de chat/jour selon le modèle (ordre de grandeur à calibrer dans **Workers AI → Usage** — voir « Non vérifié »). Le Worker Free (100 000 req/jour) ne sera jamais le goulot. Le français est bon (Qwen 3.8 27B, multilingue), la latence edge est faible, et le déploiement se fait **entièrement dans le dashboard Cloudflare** (aucun `wrangler` local requis).
 
 ### Secours — WebLLM (famille A, 100 % navigateur)
 
@@ -159,7 +161,7 @@ Design sobre, mobile first, **aucune clé dans le code** (l'URL du Worker est pu
 // worker.js — Cloudflare Worker (MIT)
 // Secrets à définir dans le dashboard : ALLOWED_ORIGIN (ex. https://votre-site.fr)
 
-const MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8-fast"; // vérifié au catalogue Workers AI
+const MODEL = "@cf/qwen/qwen3.8-27b"; // vérifié au catalogue Workers AI (2026-11-27) — llama-3.1-8b-instruct-fp8-fast n'est plus disponible
 const MAX_MSG = 12, MAX_LEN = 1000, RATE_MAX = 20, RATE_WINDOW = 60000;
 
 // Rate limit best-effort (par isolate — voir Limites)
